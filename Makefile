@@ -27,11 +27,11 @@ clean:
 
 test: run_tests clean_test
 
-run_tests: db_test
-	./db_test
+run_tests: db_test http_test
+	./db_test && ./http_test
 
 clean_test:
-	${REMOVE} db_test db_test.o unity.o
+	${REMOVE} db_test db_test.o http_test http_test.o unity.o
 
 unity.o: vendor/unity/unity.c vendor/unity/unity.h
 	${COMPILE} vendor/unity/unity.c
@@ -41,3 +41,9 @@ db_test: db_test.o db.o unity.o
 
 db_test.o: db/db_test.c db/db.h
 	${COMPILE} db/db_test.c
+
+http_test: http_test.o http.o unity.o
+	${LINK} http_test.o http.o unity.o ${LIBCURL_LFLAGS} -o http_test
+
+http_test.o: http/http_test.c http/http.h
+	${COMPILE} http/http_test.c

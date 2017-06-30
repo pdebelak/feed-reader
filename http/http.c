@@ -50,6 +50,7 @@ int http_get_url(char *url, http_response **resp) {
   r->body = fp;
   r->status_code = status_code;
   *resp = r;
+  curl_easy_cleanup(curl);
   return 0;
 }
 
