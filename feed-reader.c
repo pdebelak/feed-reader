@@ -1,22 +1,19 @@
 #include <stdio.h>
 #include "db/db.h"
+#include "http/http.h"
 
 int main(int argc, char **argv) {
   if (argc !=2) {
     printf("That's not right!\n");
     return 1;
   }
-  database *db = open_db(argv[1]);
-  execute_statement(db, "CREATE TABLE IF NOT EXISTS opposites (first string, second string);", NULL);
-  execute_statement(db, "INSERT INTO opposites (first, second) VALUES ('hello', 'goodbye');", NULL);
-  execute_statement(db, "INSERT INTO opposites (first, second) VALUES ('yes', 'no');", NULL);
-  execute_statement(db, "INSERT INTO opposites (first, second) VALUES ('up', 'down');", NULL);
-  execute_statement(db, "INSERT INTO opposites (first, second) VALUES ('awake', 'asleep');", NULL);
-  row *opposites;
-  execute_statement(db, "SELECT first, second FROM opposites;", &opposites);
-  print_rows(opposites);
-  free_row(opposites);
-  execute_statement(db, "DELETE from opposites;", NULL);
-  close_db(db);
+  http_response *r = NULL;
+  http_get_url(argv[1], &r);
+  printf("Response had a %ld status_code\n", r->status_code);
+  char *body = NULL;
+  read_http_response_body(r, &body);
+  printf("Read body:\n%s\n", body);
+  free(body);
+  free_http_response(r);
   return 0;
 }

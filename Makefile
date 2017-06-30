@@ -2,14 +2,25 @@ LINK = gcc -Wall
 COMPILE = ${LINK} -c
 REMOVE = rm -f
 
-feed-reader: feed-reader.o db.o
-	${LINK} feed-reader.o db.o -l sqlite3 -o feed-reader
+SQLITE_LFLAGS = -l sqlite3
+# LIBXML_LFLAGS = `xml2-config --libs`
+# LIBXML_CFLAGS = `xml2-config --cflags`
+LIBCURL_LFLAGS = `curl-config --libs`
 
-feed-reader.o: feed-reader.c db/db.h
-	${COMPILE} feed-reader.c
+LFLAGS = ${SQLITE_LFLAGS} ${LIBCURL_LFLAGS}
+CFLAGS = #${LIBXML_CFLAGS}
+
+feed-reader: feed-reader.o db.o http.o
+	${LINK} feed-reader.o db.o http.o ${LFLAGS} -o feed-reader
+
+feed-reader.o: feed-reader.c db/db.h http/http.h
+	${COMPILE} ${CFLAGS} feed-reader.c
 
 db.o: db/db.c db/db.h
 	${COMPILE} db/db.c
+
+http.o: http/http.c http/http.h
+	${COMPILE} ${CFLAGS} http/http.c
 
 clean:
 	${REMOVE} feed-reader feed-reader.o db.o
@@ -26,7 +37,7 @@ unity.o: vendor/unity/unity.c vendor/unity/unity.h
 	${COMPILE} vendor/unity/unity.c
 
 db_test: db_test.o db.o unity.o
-	${LINK} db_test.o db.o unity.o -l sqlite3 -o db_test
+	${LINK} db_test.o db.o unity.o ${SQLITE_LFLAGS} -o db_test
 
 db_test.o: db/db_test.c db/db.h
 	${COMPILE} db/db_test.c
