@@ -4,7 +4,9 @@
 void test_can_create_table_insert_and_select(void) {
   int exec;
   row *opposites;
-  database *db = open_db(":memory:");
+  database *db;
+  exec = open_db(":memory:", &db);
+  TEST_ASSERT_EQUAL(0, exec);
   exec = execute_statement(db, "CREATE TABLE opposites (first string, second string);", NULL);
   TEST_ASSERT_EQUAL(0, exec);
   exec = execute_statement(db, "INSERT INTO opposites (first, second) VALUES ('hello', 'goodbye');", NULL);
@@ -26,8 +28,11 @@ void test_can_create_table_insert_and_select(void) {
 }
 
 void test_returns_non_zero_with_bad_statement(void) {
-  database *db = open_db(":memory:");
-  int exec = execute_statement(db, "SELECT first, second FROM opposites;", NULL);
+  database *db;
+  int exec;
+  exec =  open_db(":memory:", &db);
+  TEST_ASSERT_EQUAL(0, exec);
+  exec = execute_statement(db, "SELECT first, second FROM opposites;", NULL);
   TEST_ASSERT_EQUAL(1, exec);
   exec = close_db(db);
   TEST_ASSERT_EQUAL(0, exec);

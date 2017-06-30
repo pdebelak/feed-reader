@@ -25,10 +25,10 @@ typedef struct row {
   result * results;
 } row;
 
-// open_db opens a database with given name and returns a pointer to it.
-// :memory: can be used for an in-memory database. Must be closed with close_db
-// to avoid leaking resources.
-database * open_db(char *db_name);
+// open_db opens a database with given name in the passed pointer. Returns
+// non-zero value in case of an error :memory: can be used for an in-memory
+// database. Must be closed with close_db to avoid leaking resources.
+int open_db(char *db_name, database **db);
 
 // close_db closes a db. Is a no-op for already closed db.
 int close_db(database * db);
