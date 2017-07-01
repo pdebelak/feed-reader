@@ -9,7 +9,7 @@ int main(int argc, char **argv) {
   }
   int err = save_site(argv[1], argv[2], argv[3]);
   if (err != 0) {
-    printf("Something went wrong saving in the site D:\n");
+    printf("Something went wrong saving the site D:\n");
     return 1;
   }
   return 0;

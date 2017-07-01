@@ -6,20 +6,8 @@
 #include "../fetcher/fetcher.h"
 #include "../db/db.h"
 
-typedef enum feed_type {
-  ATOM,
-  RSS
-} feed_type;
-
-typedef struct site {
-  char *feed_url;
-  char *base_url;
-  char *title;
-  feed_type type;
-} site;
-
+// save_site looks up data for a given site and saves it in the given sqlite3
+// database. Returns non-zero in case of an error.
 int save_site(char *db_name, char *title, char *url);
-
-void free_site(site *s);
 
 #endif

@@ -101,3 +101,11 @@ site * fetch_feed_url(char *url) {
   free(feed_url);
   return s;
 }
+
+void free_site(site *s) {
+  if (s == NULL) return;
+  if (s->feed_url != NULL) free(s->feed_url);
+  if (s->base_url != NULL) free(s->base_url);
+  free(s);
+}
+

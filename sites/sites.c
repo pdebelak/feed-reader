@@ -1,12 +1,5 @@
 #include "sites.h"
 
-void free_site(site *s) {
-  if (s == NULL) return;
-  if (s->feed_url != NULL) free(s->feed_url);
-  if (s->base_url != NULL) free(s->base_url);
-  free(s);
-}
-
 int save_site(char *db_name, char *title, char *url) {
   int err;
   database *db;

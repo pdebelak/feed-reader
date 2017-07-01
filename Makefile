@@ -22,10 +22,10 @@ db.o: db/db.c db/db.h
 http.o: http/http.c http/http.h
 	${COMPILE} http/http.c
 
-fetcher.o: fetcher/fetcher.c fetcher/fetcher.h http/http.h sites/sites.h
+fetcher.o: fetcher/fetcher.c fetcher/fetcher.h http/http.h
 	${COMPILE} ${LIBXML_CFLAGS} fetcher/fetcher.c
 
-sites.o: sites/sites.c sites/sites.h db/db.h
+sites.o: sites/sites.c sites/sites.h fetcher/fetcher.h db/db.h
 	${COMPILE} ${LIBXML_CFLAGS} sites/sites.c
 
 clean:
@@ -33,11 +33,11 @@ clean:
 
 test: run_tests clean_test
 
-run_tests: db_test http_test fetcher_test
-	./db_test && ./http_test && ./fetcher_test
+run_tests: db_test http_test fetcher_test sites_test
+	./db_test && ./http_test && ./fetcher_test && ./sites_test
 
 clean_test:
-	${REMOVE} db_test db_test.o http_test http_test.o fetcher_test fetcher_test.o unity.o
+	${REMOVE} db_test db_test.o http_test http_test.o fetcher_test fetcher_test.o sites_test sites_test.o sites_test_db.sqlite3 unity.o
 
 unity.o: vendor/unity/unity.c vendor/unity/unity.h
 	${COMPILE} vendor/unity/unity.c
@@ -54,8 +54,14 @@ http_test: http_test.o http.o unity.o
 http_test.o: http/http_test.c http/http.h
 	${COMPILE} http/http_test.c
 
-fetcher_test: fetcher_test.o fetcher.o http.o sites.o db.o unity.o
-	${LINK} fetcher_test.o fetcher.o http.o sites.o db.o unity.o ${LIBCURL_LFLAGS} ${LIBXML_LFLAGS} ${SQLITE_LFLAGS} ${LIBXML_CFLAGS} -o fetcher_test
+fetcher_test: fetcher_test.o fetcher.o http.o db.o unity.o
+	${LINK} fetcher_test.o fetcher.o http.o db.o unity.o ${LIBCURL_LFLAGS} ${LIBXML_LFLAGS} ${SQLITE_LFLAGS} ${LIBXML_CFLAGS} -o fetcher_test
 
-fetcher_test.o: fetcher/fetcher_test.c fetcher/fetcher.h http/http.h sites/sites.h
+fetcher_test.o: fetcher/fetcher_test.c fetcher/fetcher.h http/http.h
 	${COMPILE} ${LIBXML_CFLAGS} fetcher/fetcher_test.c
+
+sites_test: sites_test.o sites.o fetcher.o http.o db.o unity.o
+	${LINK} sites_test.o fetcher.o http.o sites.o db.o unity.o ${LIBCURL_LFLAGS} ${LIBXML_LFLAGS} ${SQLITE_LFLAGS} ${LIBXML_CFLAGS} -o sites_test
+
+sites_test.o: sites/sites_test.c sites/sites.h fetcher/fetcher.h http/http.h db/db.h
+	${COMPILE} ${LIBXML_CFLAGS} sites/sites_test.c
