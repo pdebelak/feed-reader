@@ -9,7 +9,9 @@ void stop_http() {
 }
 
 void free_http_response(http_response *r) {
+  if (r == NULL) return;
   fclose(r->body);
+  free(r->url);
   free(r);
 }
 
@@ -45,10 +47,16 @@ int http_get_url(char *url, http_response **resp) {
   if (code != CURLE_OK) {
     return code;
   }
+  char *final_url;
+  code = curl_easy_getinfo(curl, CURLINFO_EFFECTIVE_URL, &final_url);
+  if (code != CURLE_OK) {
+    return code;
+  }
   r = malloc(sizeof(http_response));
   if (r == NULL) return 1;
   r->body = fp;
   r->status_code = status_code;
+  r->url = strdup(final_url);
   *resp = r;
   curl_easy_cleanup(curl);
   return 0;

@@ -4,9 +4,11 @@
 #include <curl/curl.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef struct http_response {
   long status_code;
+  char *url;
   FILE *body;
 } http_response;
 

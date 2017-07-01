@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+
+require 'webrick'
+server = WEBrick::HTTPServer.new(Port: 3333)
+server.mount_proc('/atom') { |req, res| res.body = '<!DOCTYPE html><html><head><link type="application/atom+xml" href="/atom.xml"></link></head><body>Hello, world!</body></html>' }
+server.mount_proc('/rss') { |req, res| res.body = '<!DOCTYPE html><html><head><link type="application/rss+xml" href="https://example.com/rss.xml" /></head><body>Hello, world!</body></html>' }
+server.mount_proc('/neither') { |req, res| res.body = '<!DOCTYPE html><html><head><title>Yo, dawg!</title></head><body>Hello, world!</body></html>' }
+server.start

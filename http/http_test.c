@@ -35,14 +35,14 @@ int main(void) {
   pid_t pid;
   pid = fork();
   if (pid == 0) {
-    setsid();
-    // Using ruby to start a fake server, not sure of a good way to do this.
-    system("ruby -e \"require 'webrick'; server = WEBrick::HTTPServer.new(Port: 3333); server.mount_proc('/page') { |req, res| res.body = 'Hello, world!' }; server.start\"");
+    execve("./http/http_server", NULL, NULL);
   } else {
-    sleep(1); // This is hacky and terrible and I should feed bad
+    // This is hacky and terrible and I should feed bad, but the server needs
+    // time to come up
+    sleep(1);
     RUN_TEST(test_makes_http_request_with_status_code_and_body);
     RUN_TEST(test_sets_status_code_to_404_for_nonexistant_pages);
-    kill(pid*-1, SIGKILL);
+    kill(pid, SIGKILL);
     return UNITY_END();
   }
 }

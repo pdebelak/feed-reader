@@ -1,19 +1,25 @@
 #include <stdio.h>
 #include "db/db.h"
-#include "http/http.h"
+#include "fetcher/fetcher.h"
 
 int main(int argc, char **argv) {
   if (argc !=2) {
     printf("That's not right!\n");
     return 1;
   }
-  http_response *r = NULL;
-  http_get_url(argv[1], &r);
-  printf("Response had a %ld status_code\n", r->status_code);
-  char *body = NULL;
-  read_http_response_body(r, &body);
-  printf("Read body:\n%s\n", body);
-  free(body);
-  free_http_response(r);
+  site *s = fetch_feed_url(argv[1]);
+  if (s != NULL) {
+    printf("Feed url: %s\n", s->feed_url);
+    printf("Base url: %s\n", s->base_url);
+    if (s->type == ATOM) {
+      printf("Feed type: atom\n");
+    } else if (s->type == RSS) {
+      printf("Feed type: rss\n");
+    }
+    free_site(s);
+  } else {
+    printf("No feed found\n");
+    return 1;
+  }
   return 0;
 }
