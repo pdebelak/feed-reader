@@ -1,24 +1,15 @@
 #include <stdio.h>
-#include "db/db.h"
+#include "sites/sites.h"
 #include "fetcher/fetcher.h"
 
 int main(int argc, char **argv) {
-  if (argc !=2) {
-    printf("That's not right!\n");
+  if (argc != 4) {
+    printf("That's not right! Usage: feed-reader dbname sitename siteurl\n");
     return 1;
   }
-  site *s = fetch_feed_url(argv[1]);
-  if (s != NULL) {
-    printf("Feed url: %s\n", s->feed_url);
-    printf("Base url: %s\n", s->base_url);
-    if (s->type == ATOM) {
-      printf("Feed type: atom\n");
-    } else if (s->type == RSS) {
-      printf("Feed type: rss\n");
-    }
-    free_site(s);
-  } else {
-    printf("No feed found\n");
+  int err = save_site(argv[1], argv[2], argv[3]);
+  if (err != 0) {
+    printf("Something went wrong saving in the site D:\n");
     return 1;
   }
   return 0;
